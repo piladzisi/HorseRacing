@@ -51,3 +51,12 @@ class Race {
         tracker.printRaceSummary()
     }
 }
+
+let jubilee = Horse(name: "Jubilee", maxSpeed: 16)
+let sonora = Horse(name: "Sonora", maxSpeed: 17)
+let jasper = Horse(name: "Jasper", maxSpeed: 17)
+
+let participants = [jubilee, sonora, jasper]
+
+let race = Race(laps: 1, participants: participants)
+race.start()
