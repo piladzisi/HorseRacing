@@ -1,3 +1,8 @@
+import Foundation
+import PlaygroundSupport
+
+PlaygroundPage.current.needsIndefiniteExecution = true
+
 class Horse {
     let name: String
     let maxSpeed: Double
