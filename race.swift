@@ -1,3 +1,20 @@
+class Horse {
+    let name: String
+    let maxSpeed: Double
+    var distanceTraveled = 0.0
+    var currentLap = 1
+    
+    init(name: String, maxSpeed: Double) {
+        self.maxSpeed = maxSpeed
+        self.name = name
+    }
+    
+    var currentSpeed: Double {
+        let random = Double(arc4random())
+        return random.truncatingRemainder(dividingBy: maxSpeed - 13) + 13
+    }
+}
+
 class Race {
     let laps: Int
     let lapLength: Double = 300
