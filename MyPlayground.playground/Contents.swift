@@ -26,7 +26,7 @@ protocol HorseRaceDelegate: class {
     func race(_ race: Race, didEndAt time: Date, withWinner winner: Horse)
 }
 
-class Tracker {
+class Tracker: HorseRaceDelegate {
     
     struct Keys {
         static let raceStartTime = "raceStartTime"
@@ -37,22 +37,21 @@ class Tracker {
     
     var stats = [String: Any]()
     
-    func updateRaceStart(with time: Date) {
+    func race(_ race: Race, didStartAt time: Date) {
         stats.updateValue(time, forKey: Keys.raceStartTime)
     }
-    
-    func updateLapLeaderWith(lapNumber number: Int, horse: Horse, time: Date) {
+    func addLapLeader(_ horse: Horse, forLap lap: Int, atTime time: Date) {
         let lapLead = "Horse: \(horse.name), time: \(time)"
-        let lapLeadKey = "\(Keys.lapLeader) \(number)"
+        let lapLeadKey = "\(Keys.lapLeader) \(lap)"
         
         stats.updateValue(lapLead, forKey: lapLeadKey)
     }
-    
-    func updateRaceEndWith(winner: Horse, time: Date) {
+    func race(_ race: Race, didEndAt time: Date, withWinner winner: Horse) {
         stats.updateValue(winner.name, forKey: Keys.winner)
         stats.updateValue(time, forKey: Keys.raceEndTime)
+        
+        printRaceSummary()
     }
-    
     func printRaceSummary() {
         print("***********")
         
@@ -73,8 +72,16 @@ class Tracker {
     }
 }
 
-class RaceBroadcaster {
-    
+class RaceBroadcaster: HorseRaceDelegate {
+    func race(_ race: Race, didStartAt time: Date) {
+        //some implementation
+    }
+    func addLapLeader(_ horse: Horse, forLap lap: Int, atTime time: Date) {
+        //some implementation
+    }
+    func race(_ race: Race, didEndAt time: Date, withWinner winner: Horse) {
+        //some implementation
+    }
 }
 class Race {
     let laps: Int
@@ -133,6 +140,28 @@ let jasper = Horse(name: "Jasper", maxSpeed: 17)
 let participants = [jubilee, sonora, jasper]
 
 let race = Race(laps: 1, participants: participants)
+let tracker = Tracker()
+let broadcaster = RaceBroadcaster()
+race.delegate = broadcaster
+race.delegate = tracker
 race.start()
 
+class RaceManager: HorseRaceDelegate{
+    let race: Race
+    init(race: Race) {
+        self.race = race
+        race.delegate = self
+        race.start()
+    }
+    
+    func race(_ race: Race, didStartAt time: Date){
+        ////some implementation
+    }
+    func addLapLeader(_ horse: Horse, forLap lap: Int, atTime time: Date) {
+        //some implementation
+    }
+    func race(_ race: Race, didEndAt time: Date, withWinner winner: Horse) {
+            //some implementation
+    }
+}
 
