@@ -81,4 +81,4 @@ let jasper = Horse(name: "Jasper", maxSpeed: 17)
 let participants = [jubilee, sonora, jasper]
 
 let race = Race(laps: 1, participants: participants)
-race.start()
+//race.start()
