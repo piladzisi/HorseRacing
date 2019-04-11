@@ -20,6 +20,11 @@ class Horse {
     }
 }
 
+protocol HorseRaceDelegate: class {
+    func race(_ race: Race, didStartAt time: Date)
+    func addLapLeader(_ horse: Horse, forLap lap: Int, atTime time: Date)
+    func race(_ race: Race, didEndAt time: Date, withWinner winner: Horse)
+}
 
 class Tracker {
     
@@ -68,13 +73,15 @@ class Tracker {
     }
 }
 
+class RaceBroadcaster {
+    
+}
 class Race {
     let laps: Int
     let lapLength: Double = 300
     let participants: [Horse]
-    
-    let tracker = Tracker()
-
+   
+    weak var delegate: HorseRaceDelegate?
     
     lazy var timer: Timer = Timer(timeInterval: 1, repeats: true) { timer in
         self.updateProgress()
@@ -87,7 +94,7 @@ class Race {
     
     func start() {
         RunLoop.main.add(timer, forMode: RunLoop.Mode.default)
-        tracker.updateRaceStart(with: Date())
+        delegate?.race(self, didStartAt: Date())
         print("Race in progress...")
     }
     
@@ -99,15 +106,12 @@ class Race {
             if horse.distanceTraveled >= lapLength {
                 horse.distanceTraveled = 0
                 
-                let lapKey = "\(Tracker.Keys.lapLeader) \(horse.currentLap)"
-                if !tracker.stats.keys.contains(lapKey) {
-                    tracker.updateLapLeaderWith(lapNumber: horse.currentLap, horse: horse, time: Date())
-                }
+                delegate?.addLapLeader(horse, forLap: horse.currentLap, atTime: Date())
                 
                 horse.currentLap += 1
                 
                 if horse.currentLap >= laps + 1 {
-                    tracker.updateRaceEndWith(winner: horse, time: Date())
+                    delegate?.race(self, didEndAt: Date(), withWinner: horse)
                     stop()
                     break
                 }
@@ -118,7 +122,7 @@ class Race {
     func stop() {
         print("Race complete!")
         timer.invalidate()
-        tracker.printRaceSummary()
+       
     }
 }
 
